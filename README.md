@@ -1,5 +1,7 @@
 # Projektbeskrivning
+**Erik Hamrin** (eh222ve)
 
+1DV449 Linnéuniversitetet
 ##Sammanfattning
 En responsiv webbsida där användaren kan välja artiklar ur Systembolagets sortiment och fylla i vad motsvarande skulle kosta på en border shop för att slutligen lägga till detta i en "kundvagn".
 
