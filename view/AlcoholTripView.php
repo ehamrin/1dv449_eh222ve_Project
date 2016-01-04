@@ -13,13 +13,39 @@ class AlcoholTripView
         $this->model = $model;
     }
 
+    public function getSearchValue()
+    {
+        return $_GET['search'] ?? "";
+
+    }
+
+    public function getSearchResult(){
+        $ret = "";
+        if(isset($_GET['search'])){
+            $res = $this->model->searchProduct($_GET['search']);
+            if(count($res)){
+
+                foreach($res as $row){
+                    $ret .= '<li>
+                        <span class="title">' . $row->name . ' (' . $row->alcohol . ')</span>
+                        <span class="producer">' . $row->producer . '</span>
+                        <span class="price">' . $row->price . 'kr</span>
+                        <span class="container">' . $row->volume . 'ml (' . $row->container . ')</span>
+                    </li>';
+                }
+
+                return '<div id="search_result"><ul>' . $ret . '</ul></div>';
+            }
+        }
+        return $ret;
+    }
+
     public function RenderModule(){
 
-        $this->model->GetProducts();
-
         return <<<HTML
-        <form action="" method="POST">
-        <input type="search" name="search_term"/>
+        <form action="" method="GET">
+        <input type="search" name="search" value="{$this->getSearchValue()}"/>
+        {$this->getSearchresult()}
 </form>
 <div class="module-sidebar">
 <h2>Varukorg</h2>

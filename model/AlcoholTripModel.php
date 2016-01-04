@@ -14,6 +14,23 @@ class AlcoholTripModel
         return $this->loadFromDb() ?? $this->getFromAPI('https://www.systembolaget.se/api/assortment/products/xml');
     }
 
+    public function searchProduct($term){
+        try{
+            $this->GetProducts();
+
+            $search_term = "%$term%";
+
+            $stmt = $this->conn->prepare("SELECT *, MATCH(name) AGAINST (:term) as score FROM product WHERE MATCH(name) AGAINST (:term) OR identifier LIKE :search_term ORDER BY score DESC, name ASC, volume DESC");
+            $stmt->execute(array(":term" => $term, ":search_term" => $search_term));
+
+            return $stmt->fetchAll();
+        }catch(\Exception $e){
+            debug($e);
+            throw $e;
+        }
+
+    }
+
     private function loadFromDb(){
         $time = date('Y-m-d H:i:s', strtotime('-' . self::$cache_life  . ' days', time()));
 
@@ -53,7 +70,9 @@ class AlcoholTripModel
         foreach($xml->artikel as $product){
             $rows[] = array(
                 $product->Artikelid[0],
-                $product->Namn[0],
+                $product->Varnummer[0],
+                $product->Namn[0] . " " . $product->Namn2[0],
+                $product->Producent[0],
                 $product->Prisinklmoms[0],
                 $product->Forpackning[0],
                 $product->Alkoholhalt[0],
@@ -77,15 +96,14 @@ class AlcoholTripModel
 
                 //Add proper sql to array foreach row
                 foreach($chunk as $row){
-                    $stmt[] = "(?,?,?,?,?,?)";
+                    $stmt[] = "(?,?,?,?,?,?,?,?)";
 
                     //Add params to single array
                     foreach($row as $param){
                         $params[] = $param;
-
                     }
                 }
-                $sql = "INSERT INTO product (id, name, price, container, alcohol, volume) VALUES " . implode(',', $stmt);
+                $sql = "INSERT INTO product (id, identifier, name, producer, price, container, alcohol, volume) VALUES " . implode(',', $stmt);
                 $stmt = $this->conn->prepare($sql);
                 $stmt->execute($params);
             }
@@ -104,17 +122,20 @@ class AlcoholTripModel
         $this->conn->exec('
           CREATE TABLE IF NOT EXISTS `product` (
               `id` int(11) NOT NULL,
+              `identifier` int(11) NOT NULL,
               `name` varchar(200) COLLATE utf8_swedish_ci NOT NULL,
               `price` varchar(20) COLLATE utf8_swedish_ci NOT NULL,
               `container` varchar(50) COLLATE utf8_swedish_ci NOT NULL,
               `alcohol` varchar(20) COLLATE utf8_swedish_ci NOT NULL,
               `volume` varchar(20) COLLATE utf8_swedish_ci NOT NULL,
               `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 
-         ALTER TABLE `product`
-            ADD PRIMARY KEY (`id`);
+          ALTER TABLE `product`
+          ADD PRIMARY KEY (`id`);
+
+          ALTER TABLE `product` ADD FULLTEXT(name);
         ');
     }
 
