@@ -24,7 +24,6 @@ class AlcoholTripView
         if(isset($_GET['search'])){
             $res = $this->model->searchProduct($_GET['search']);
             if(count($res)){
-
                 foreach($res as $row){
                     $ret .= '<li>
                         <span class="title">' . $row->name . ' (' . $row->alcohol . ')</span>
@@ -34,18 +33,21 @@ class AlcoholTripView
                     </li>';
                 }
 
-                return '<div id="search_result"><ul>' . $ret . '</ul></div>';
+                return '<ul>' . $ret . '</ul>';
             }
         }
         return $ret;
     }
 
     public function RenderModule(){
+        $this->application->AddScriptDependency('/js/AlcoholTrip/trip-calculator.js');
+
+        $searchResult = $this->getSearchresult();
 
         return <<<HTML
-        <form action="" method="GET">
-        <input type="search" name="search" value="{$this->getSearchValue()}"/>
-        {$this->getSearchresult()}
+        <form action="" id="search_form" method="GET">
+        <input type="search" name="search" id="product_search" value="{$this->getSearchValue()}"/>
+        <div id="search_result">{$searchResult}</div>
 </form>
 <div class="module-sidebar">
 <h2>Varukorg</h2>

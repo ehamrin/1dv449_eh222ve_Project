@@ -69,4 +69,17 @@ class AlcoholTrip implements \IPlugin
     public function HookPageModuleAlcoholTrip(...$args){
         return $this->publicController->AlcoholTrip(...$args);
     }
+
+    public function HookJSON($filename){
+        switch($filename){
+            case "products.json":
+                if(isset($_GET['search'])){
+                    $res = $this->model->searchProduct($_GET['search']);
+                    return json_encode($res, JSON_PRETTY_PRINT);
+                }
+                break;
+        }
+
+        return false;
+    }
 }
