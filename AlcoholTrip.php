@@ -14,7 +14,6 @@ namespace plugin\AlcoholTrip;
 
 class AlcoholTrip implements \IPlugin
 {
-
     private $model;
     private $view;
     private $adminController;

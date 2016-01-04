@@ -1,19 +1,25 @@
 <?php
 namespace plugin\AlcoholTrip\view;
 
+use plugin\AlcoholTrip\model\AlcoholTripModel;
+
 class AlcoholTripView
 {
     private $application;
 
-    public function __construct(\Application $application)
+    public function __construct(\Application $application, AlcoholTripModel $model)
     {
         $this->application = $application;
+        $this->model = $model;
     }
 
     public function RenderModule(){
+
+        $this->model->GetProducts();
+
         return <<<HTML
-        <form>
-        <input type="search"/>
+        <form action="" method="POST">
+        <input type="search" name="search_term"/>
 </form>
 <div class="module-sidebar">
 <h2>Varukorg</h2>
