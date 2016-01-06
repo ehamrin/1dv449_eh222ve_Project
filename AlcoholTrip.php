@@ -78,6 +78,26 @@ class AlcoholTrip implements \IPlugin
                     return json_encode($res, JSON_PRETTY_PRINT);
                 }
                 break;
+            case "location.json":
+                if(isset($_GET['lat'], $_GET['long'])){
+                    if($res = $this->model->getCity($_GET['lat'], $_GET['long'])){
+                        return json_encode($res, JSON_PRETTY_PRINT);
+                    }else{
+                        header("HTTP/1.0 400 Bad Request");
+                        return json_encode("Unknown location");
+                    }
+                }
+                break;
+            case "distance.json":
+                if(isset($_GET['from'], $_GET['to'])){
+                    if($res = $this->model->getDistance($_GET['from'], $_GET['to'])){
+                        return json_encode($res, JSON_PRETTY_PRINT);
+                    }else{
+                        header("HTTP/1.0 400 Bad Request");
+                        return json_encode("Unknown error");
+                    }
+                }
+                break;
         }
 
         return false;
