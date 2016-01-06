@@ -28,6 +28,49 @@ class AlcoholTripModel
         return false;
     }
 
+    public function getGasPrice(){
+        try{
+            $TweetPHP = new \TweetPHP(array(
+                'consumer_key'              => \Settings::Twitter_ConsumerKey,
+                'consumer_secret'           => \Settings::Twitter_ConsumerSecret,
+                'access_token'              => \Settings::Twitter_AccessToken,
+                'access_token_secret'       => \Settings::Twitter_AccessTokenSecret,
+                'twitter_screen_name'       => 'St1Sverige',
+                'cache_dir'                 => __DIR__ . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
+                'cache_time'                => 60*60*24, //1 day
+                'debug'                     => true
+            ));
+
+            $tweet_array = $TweetPHP->get_tweet_array();
+
+            $gasPrice = new GasPrice();
+
+            $regexArray = array(
+                'Gas' => 'B95',
+                'Diesel' => 'Diesel',
+                'Ethanol' => 'E85'
+            );
+
+            foreach($tweet_array as $tweet){
+                $text = $tweet["text"];
+
+                foreach($regexArray as $key => $val){
+                    preg_match('/' . $val . ': (.*)/', $text, $m);
+                    if(isset($m[1])){
+                        $price = str_replace(',', '.', $m[1]);
+                        $price = floatval($price);
+                        $gasPrice->{'add' . $key}($price);
+                    }
+                }
+            }
+
+            return $gasPrice;
+
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+
     public function getCity($lat, $long){
         $url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=";
         $url .= round($lat,2).",";

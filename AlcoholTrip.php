@@ -98,6 +98,15 @@ class AlcoholTrip implements \IPlugin
                     }
                 }
                 break;
+            case "gas_price.json":
+
+                if($res = $this->model->getGasPrice()){
+                    return json_encode($res, JSON_PRETTY_PRINT);
+                }else{
+                    header("HTTP/1.0 400 Bad Request");
+                    return json_encode("Unknown error");
+                }
+                break;
         }
 
         return false;
