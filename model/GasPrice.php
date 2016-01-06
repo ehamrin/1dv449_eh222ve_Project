@@ -9,21 +9,34 @@ class GasPrice
     public $gas;
     public $diesel;
     public $ethanol;
+    public $date;
 
     private $gasCount = array();
     private $dieselCount = array();
     private $ethanolCount = array();
 
-    public function addGas($price){
-        $this->addEntry('gas', $price);
-    }
+    public function __construct($tweet_array){
+        //Set todays date for frontend caching
+        $this->date = date('Y-m-d');
 
-    public function addDiesel($price){
-        $this->addEntry('diesel', $price);
-    }
+        $regexArray = array(
+            'gas' => 'B95',
+            'diesel' => 'Diesel',
+            'ethanol' => 'E85'
+        );
 
-    public function addEthanol($price){
-        $this->addEntry('ethanol', $price);
+        foreach($tweet_array as $tweet){
+            $text = $tweet["text"];
+
+            foreach($regexArray as $key => $val){
+                preg_match('/' . $val . ': (.*)/', $text, $m);
+                if(isset($m[1])){
+                    $price = str_replace(',', '.', $m[1]);
+                    $price = floatval($price);
+                    $this->addEntry($key, $price);
+                }
+            }
+        }
     }
 
     private function addEntry($var, $priceToAdd){

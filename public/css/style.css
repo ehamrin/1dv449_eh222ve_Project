@@ -27,13 +27,13 @@
 #cart ul{
     position: relative;
     overflow: auto;
-    height: 350px;
 }
 
 .cart-item .remove{
     color: red;
     float: right;
     position: relative;
+    margin-right: 10px;
 }
 
 #search_form::before{
@@ -68,7 +68,7 @@
 
 #cart li{
     margin: 0;
-    padding: 0;
+    padding: 15px 0;
 }
 
 .product-list li:hover{

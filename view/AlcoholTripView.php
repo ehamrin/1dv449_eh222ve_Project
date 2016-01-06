@@ -59,6 +59,11 @@ class AlcoholTripView
 <h2>Varukorg</h2>
 <div id="cart" class="product-list">Din varukorg är tom</div>
 <h2>Milförbukning</h2>
+    <select id="gas_type">
+        <option value="gas" selected>Bensin</option>
+        <option value="diesel">Diesel</option>
+        <option value="ethanol">Etanol</option>
+    </select>
     <input id="gasConsumption" type="number" step="0.05" min="0" max="3" value="0.4"/>l/mil
 <h2>Plats</h2>
     <select id="location">

@@ -12,9 +12,9 @@ var Result = {
         var html = '<div id="result_details">';
         html += "<span><strong>Bensinförbrukning:</strong> " + parseFloat(Gas.get()) + "</span>";
         html += "<span><strong>Avstånd:</strong> " + Math.round(Distance.mile) + " mil</span>";
-        html += "<span><strong>Liter bensin:</strong> " + Math.round(GasConsumption.liter * 2) + "</span>";
-        html += "<span><strong>Bensinpris:</strong> 12.48kr/liter</span>";
-        html += "<span><strong>Total resekostnad:</strong> " + Math.round(GasConsumption.liter * 12.48 * 2) + "kr</span>";
+        html += "<span><strong>Literförbrukning:</strong> " + Math.round(GasConsumption.liter * 2) + " liter</span>";
+        html += "<span><strong>" + GasPrice.getText() + "pris:</strong> " +  GasPrice.getPrice().toFixed(2) + "kr/liter</span>";
+        html += "<span><strong>Total resekostnad:</strong> " + Math.round(GasConsumption.liter * GasPrice.getPrice() * 2) + "kr</span>";
         html += "<span><strong>Alkoholpris:</strong> " +  Math.round(Cart.borderPrice) + "kr</span>";
         html += "<span><strong>Systemetpris:</strong> " +  Math.round(Cart.total) + "kr</span>";
         html += "</div>";
@@ -31,7 +31,7 @@ var Result = {
 
     calculate: function(){
         var localCost = Cart.total;
-        var borderCost = Cart.borderPrice + (GasConsumption.liter * 12.48 * 2);
+        var borderCost = Cart.borderPrice + (GasConsumption.liter * GasPrice.getPrice() * 2);
         var resultContainer = $("#result");
 
         if(localCost){
@@ -51,6 +51,47 @@ var Result = {
             resultContainer.hide();
         }
 
+    }
+};
+
+var GasPrice = {
+    isValid: function(){
+        var cache = JSON.parse(localStorage.getItem('gasPrice'));
+
+        if(!cache){
+            return false;
+        }
+
+        var currentDate = new Date();
+        var cachedDate = new Date(cache.date);
+        currentDate.setHours(0,0,0,0);
+        cachedDate.setHours(0,0,0,0);
+
+        return currentDate.getTime() >= cachedDate.getTime();
+    },
+
+    get: function(){
+        if(GasPrice.isValid()){
+            return JSON.parse(localStorage.getItem('gasPrice'));
+        }else{
+            $.ajax({
+                type: "GET",
+                url: "/json/AlcoholTrip/gas_price.json",
+                success: function(response){
+                    console.log("got new price", response);
+                    localStorage.setItem('gasPrice', JSON.stringify(response));
+                    return JSON.parse(localStorage.getItem('gasPrice'));
+                }
+            });
+        }
+    },
+    getPrice: function(){
+        var prices = GasPrice.get();
+        var selected = $("#gas_type").val();
+        return prices[selected];
+    },
+    getText: function(){
+        return $("#gas_type option:selected").text();
     }
 };
 
@@ -373,6 +414,7 @@ $(document).ready(function(){
     });
 
     $("#location").on("change", Distance.update);
+    $("#gas_type").on("change", Result.calculate);
     $("#destination").on("change", Distance.update);
     $("#view_results").on("click", Result.showDetails);
 
@@ -384,6 +426,4 @@ $(document).ready(function(){
     Locator.draw();
     Gas.draw();
     Distance.update();
-
-
 });

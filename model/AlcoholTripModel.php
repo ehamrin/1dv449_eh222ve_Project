@@ -37,32 +37,12 @@ class AlcoholTripModel
                 'access_token_secret'       => \Settings::Twitter_AccessTokenSecret,
                 'twitter_screen_name'       => 'St1Sverige',
                 'cache_dir'                 => __DIR__ . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
-                'cache_time'                => 60*60*24, //1 day
-                'debug'                     => true
+                'cache_time'                => 60*60*24 //1 day
             ));
 
             $tweet_array = $TweetPHP->get_tweet_array();
 
-            $gasPrice = new GasPrice();
-
-            $regexArray = array(
-                'Gas' => 'B95',
-                'Diesel' => 'Diesel',
-                'Ethanol' => 'E85'
-            );
-
-            foreach($tweet_array as $tweet){
-                $text = $tweet["text"];
-
-                foreach($regexArray as $key => $val){
-                    preg_match('/' . $val . ': (.*)/', $text, $m);
-                    if(isset($m[1])){
-                        $price = str_replace(',', '.', $m[1]);
-                        $price = floatval($price);
-                        $gasPrice->{'add' . $key}($price);
-                    }
-                }
-            }
+            $gasPrice = new GasPrice($tweet_array);
 
             return $gasPrice;
 
