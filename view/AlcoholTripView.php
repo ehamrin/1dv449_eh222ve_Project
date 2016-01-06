@@ -46,11 +46,15 @@ class AlcoholTripView
         $searchResult = $this->getSearchresult();
 
         return <<<HTML
-        <div id="result"></div>
+        <div id="result">
+            <div id="view_results"><i class="fa fa-eye"></i></div>
+            <div id="result_banner"></div>
+        </div>
         <form action="" id="search_form" method="GET" class="inline-2-3">
-        <input type="search" name="search" id="product_search" value="{$this->getSearchValue()}"/>
+        <input type="search" name="search" placeholder="Sök efter varor på systembolaget" id="product_search" value="{$this->getSearchValue()}"/>
         <div id="search_result" class="product-list">{$searchResult}</div>
 </form>
+<div id="cart_menu"></div>
 <div class="module-sidebar inline-1-3">
 <h2>Varukorg</h2>
 <div id="cart" class="product-list">Din varukorg är tom</div>
@@ -64,7 +68,7 @@ class AlcoholTripView
         <option value="Västerås">Västerås</option>
         <option value="Luleå">Luleå</option>
         <option value="Kalmar">Kalmar</option>
-        <option value="Vänersborg">Vänersborg</option>
+        <option value="Trollhättan">Trollhättan</option>
         <option value="Göteborg">Göteborg</option>
     </select>
     <h3>Destination</h3>

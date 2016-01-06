@@ -4,29 +4,53 @@ var distances = localStorage.getItem('distances') ? JSON.parse(localStorage.getI
 var distanceXHR;
 
 var Result = {
-    calculate: function(){
-        localCost = Cart.total;
-        borderCost = Cart.borderPrice + (GasConsumption.liter * 12.48 * 2);
+    showDetails: function(){
 
-        html = "";
+        var localCost = Cart.total;
+        var borderCost = Cart.borderPrice + (GasConsumption.liter * 12.48 * 2);
+
+        var html = '<div id="result_details">';
         html += "<span><strong>Bensinförbrukning:</strong> " + parseFloat(Gas.get()) + "</span>";
         html += "<span><strong>Avstånd:</strong> " + Math.round(Distance.mile) + " mil</span>";
         html += "<span><strong>Liter bensin:</strong> " + Math.round(GasConsumption.liter * 2) + "</span>";
         html += "<span><strong>Bensinpris:</strong> 12.48kr/liter</span>";
         html += "<span><strong>Total resekostnad:</strong> " + Math.round(GasConsumption.liter * 12.48 * 2) + "kr</span>";
         html += "<span><strong>Alkoholpris:</strong> " +  Math.round(Cart.borderPrice) + "kr</span>";
-        html += "<span><strong>Systemetpris:</strong> " +  Math.round(localCost) + "kr</span>";
-        html += "</p>";
+        html += "<span><strong>Systemetpris:</strong> " +  Math.round(Cart.total) + "kr</span>";
+        html += "</div>";
 
-        if(borderCost < localCost){
-            html += '<p class="success">Du sparar ' + Math.round(localCost - borderCost) + 'kr på att åka iväg</p>';
-        }else if(borderCost == localCost){
-            html += '<p class="error">Du går jämt upp på åka iväg, är det värt det?</p>';
+        var type = borderCost < localCost ? "success" : "error";
+
+        swal({
+            title: "Detaljer",
+            text: html,
+            html: true,
+            type: type
+        });
+    },
+
+    calculate: function(){
+        var localCost = Cart.total;
+        var borderCost = Cart.borderPrice + (GasConsumption.liter * 12.48 * 2);
+        var resultContainer = $("#result");
+
+        if(localCost){
+            var html;
+
+            if(borderCost < localCost){
+                html = '<p class="success">Du sparar ' + Math.round(localCost - borderCost) + 'kr på att åka iväg</p>';
+            }else if(borderCost == localCost){
+                html = '<p class="error">Du går jämt upp på åka iväg,<br/> är det värt det?</p>';
+            }else{
+                html = '<p class="error">Du sparar ' + Math.round(borderCost - localCost) + 'kr<br/>på att stanna hemma</p>';
+            }
+
+            $("#result_banner").html(html);
+            resultContainer.show();
         }else{
-            html += '<p class="error">Du sparar ' + Math.round(borderCost - localCost) + 'kr på att stanna hemma</p>';
+            resultContainer.hide();
         }
 
-        $("#result").html(html);
     }
 };
 
@@ -112,7 +136,8 @@ var Locator = {
                 type: "GET",
                 url: "/json/AlcoholTrip/location.json?lat=" + lat + "&long=" + lng,
                 success: function(city){
-                    Locator.set(result);
+                    Locator.set(city);
+                    Locator.draw();
                 }
             });
         }
@@ -227,9 +252,8 @@ var Cart = {
                 '<div class="remove" data-remove="' + id + '"><i class="fa fa-times-circle"></i></div>' +
                 '<div class="product" data-id="' + id + '">' +
                 '<span class="title">' + el.name + ' (' + el.alcohol + ')</span>' +
-                '<span class="producer">Producerad av:' + el.producer + '</span>' +
-                '<span class="price">' + el.price + 'kr</span>' +
-                '<span class="container">' + el.volume + 'ml (' + el.container + ')</span>' +
+                '<span class="price">' + product.qty + 'st á ' + el.price + 'kr (' + product.localPrice + 'kr)</span>' +
+                '<span class="borderprice">' + product.price + 'kr på bordershop</span>' +
                 '</div>' +
                 '</li>';
         });
@@ -329,7 +353,12 @@ $(document).ready(function(){
     });
 
     cartElement.on('click', '.product', function(e){
-        var id = $(this).data("id");
+        var element = $(this);
+        if(!element.hasClass("product")){
+            element = element.closest(".product");
+        }
+
+        var id = element.data("id");
         Cart.add(id);
     });
 
@@ -345,6 +374,11 @@ $(document).ready(function(){
 
     $("#location").on("change", Distance.update);
     $("#destination").on("change", Distance.update);
+    $("#view_results").on("click", Result.showDetails);
+
+    $('#cart_menu').click(function(e){
+        $('body').toggleClass('active');
+    });
 
     Cart.draw();
     Locator.draw();
