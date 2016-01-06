@@ -111,7 +111,6 @@ class AlcoholTripModel
     }
 
     private function loadFromURL($url){
-        $url = "https://www.systembolaget.se/api/assortment/products/xml";
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);

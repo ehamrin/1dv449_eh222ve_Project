@@ -51,7 +51,7 @@ class AlcoholTripView
             <div id="result_banner"></div>
         </div>
         <form action="" id="search_form" method="GET" class="inline-2-3">
-        <input type="search" name="search" placeholder="Sök efter varor på systembolaget" id="product_search" value="{$this->getSearchValue()}"/>
+        <input type="search" name="search" autocomplete="off" placeholder="Sök efter varor på systembolaget" id="product_search" value="{$this->getSearchValue()}"/>
         <div id="search_result" class="product-list">{$searchResult}</div>
 </form>
 <div id="cart_menu"></div>

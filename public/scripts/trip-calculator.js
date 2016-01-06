@@ -242,7 +242,7 @@ var Cart = {
 
             swal({
                 title: "Steg 2(2)",
-                text: "Hur mycket kostar det i bordershoppen?",
+                text: "Hur mycket kostar det i bordershoppen? På systemet kostar det " + (Math.round(products[id].price) * qty) + "kr",
                 type: "input",
                 inputType: "number",
                 inputValue: (Cart.get()[id] ? Cart.get()[id].price : null),
