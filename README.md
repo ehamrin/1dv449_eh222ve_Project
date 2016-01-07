@@ -47,3 +47,7 @@ Försöka få tillgång till utbud hos några border shopar och integrera detta 
 ##Schematisk bild över applikationens beståndsdelar
 
 ![alt text](http://1dv449.erikhamrin.se/images/Alkoholrundan.png)
+
+###Klassdiagram
+
+![alt text](http://1dv449.erikhamrin.se/images/AlkoholrundanClassDiagram.png)
