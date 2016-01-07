@@ -56,7 +56,8 @@ var Result = {
 
 var GasPrice = {
     isValid: function(){
-        var cache = JSON.parse(localStorage.getItem('gasPrice'));
+        var cache = localStorage.getItem('gasPrice');
+        cache = JSON.parse(cache);
 
         if(!cache){
             return false;

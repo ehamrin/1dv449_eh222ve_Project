@@ -40,8 +40,8 @@ class AlcoholTripView
     }
 
     public function RenderModule(){
-        $this->application->AddScriptDependency('/js/AlcoholTrip/trip-calculator.js');
-        $this->application->AddCSSDependency('/css/AlcoholTrip/style.css');
+        $this->application->AddScriptDependency('/js/AlcoholTrip/trip-calculator.min.js');
+        $this->application->AddCSSDependency('/css/AlcoholTrip/style.min.css');
 
         $searchResult = $this->getSearchresult();
 
@@ -86,7 +86,6 @@ class AlcoholTripView
         <option value="Zur Kupfermühle 13 Kupfermühle, 24955 Harrislee, Tyskland">Calle Kobbermølle</option>
     </select>
 </div>
-<script src="/js/AlcoholTrip/trip-calculator.js"></script>
 HTML;
 
     }
