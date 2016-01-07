@@ -42,3 +42,8 @@ Webbsidan kommer byggas på en Apache-server med PHP7 som serverspråk. Webbsida
 ##Vidareutveckling efter deadline
 ###Integrering med border shop
 Försöka få tillgång till utbud hos några border shopar och integrera detta i tjänsten.
+
+
+##Schematisk bild över applikationens beståndsdelar
+
+![alt text](http://1dv449.erikhamrin.se/images/Alkoholrundan.png)
