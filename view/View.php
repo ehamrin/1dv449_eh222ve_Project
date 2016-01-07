@@ -9,12 +9,10 @@ class View
 {
     private $application;
 
-    public function __construct(\Application $application, SystemetAPI $systemet, GoogleAPI $google, TwitterAPI $twitter)
+    public function __construct(\Application $application, SystemetAPI $systemet)
     {
         $this->application = $application;
         $this->systemet = $systemet;
-        $this->google = $google;
-        $this->twitter = $twitter;
     }
 
     public function getSearchValue()

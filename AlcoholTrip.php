@@ -14,8 +14,9 @@ namespace plugin\AlcoholTrip;
 
 class AlcoholTrip implements \IPlugin
 {
-    private $model;
-    private $view;
+
+    private $systemet;
+    private $application;
     private $publicController;
 
     public function __construct(\Application $application){
@@ -27,10 +28,10 @@ class AlcoholTrip implements \IPlugin
         $google = new model\GoogleAPI();
 
         //Views
-        $this->view = new view\View($this->application, $this->systemet, $google, $twitter);
+        $view = new view\View($this->application, $this->systemet);
 
         //Controllers
-        $this->publicController = new controller\PublicController($this->application, $this->systemet, $google, $twitter, $this->view);
+        $this->publicController = new controller\PublicController($this->application, $this->systemet, $google, $twitter, $view);
     }
 
     function Init($method="Index", ...$params){
