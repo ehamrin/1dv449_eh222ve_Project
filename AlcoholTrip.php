@@ -15,8 +15,6 @@ namespace plugin\AlcoholTrip;
 class AlcoholTrip implements \IPlugin
 {
     private $systemet;
-    private $google;
-    private $twitter;
     private $view;
     private $publicController;
 
@@ -25,14 +23,14 @@ class AlcoholTrip implements \IPlugin
 
         //Models
         $this->systemet = new model\SystemetAPI();
-        $this->google = new model\GoogleAPI();
-        $this->twitter = new model\TwitterAPI();
+        $google = new model\GoogleAPI();
+        $twitter = new model\TwitterAPI();
 
         //Views
-        $this->view = new view\View($this->application, $this->systemet, $this->google, $this->twitter);
+        $this->view = new view\View($this->application, $this->systemet, $google, $twitter);
 
         //Controllers
-        $this->publicController = new controller\PublicController($this->application, $this->systemet, $this->google, $this->twitter, $this->view);
+        $this->publicController = new controller\PublicController($this->application, $this->systemet, $google, $twitter, $this->view);
     }
 
     function Init($method="Index", ...$params){
