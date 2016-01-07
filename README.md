@@ -51,3 +51,46 @@ Försöka få tillgång till utbud hos några border shopar och integrera detta 
 ###Klassdiagram
 
 ![alt text](http://1dv449.erikhamrin.se/images/AlcoholRundanClassDiagram.png)
+
+###Översikt av JavaScript objekt
+
+* Init()
+* Container
+ * result
+ * searchBar
+ * cart
+* AddEvents()
+* Search
+ * add
+* Result
+ * showDetails()
+ * calculate()
+* Gas
+ * Price
+     * isValid()
+     * get
+     * getPrice
+     * getText
+ * Consumption
+     * liter
+     * update()
+     * get()
+     * set()
+     * draw()
+* Distance
+ * mile
+ * update()
+ * has()
+* Locator
+ * has()
+ * update()
+ * set()
+ * get()
+* Cart
+ * total
+ * borderPrice
+ * get()
+ * add()
+ * draw()
+ * remove()
+ * empty()
