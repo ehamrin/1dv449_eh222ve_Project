@@ -14,23 +14,16 @@ namespace plugin\AlcoholTrip;
 
 class AlcoholTrip implements \IPlugin
 {
-    private $systemet;
+    private $model;
     private $view;
     private $publicController;
 
     public function __construct(\Application $application){
         $this->application = $application;
+        $this->model = new model\AlcoholTripModel();
+        $this->view = new view\AlcoholTripView($this->application, $this->model);
 
-        //Models
-        $this->systemet = new model\SystemetAPI();
-        $google = new model\GoogleAPI();
-        $twitter = new model\TwitterAPI();
-
-        //Views
-        $this->view = new view\View($this->application, $this->systemet, $google, $twitter);
-
-        //Controllers
-        $this->publicController = new controller\PublicController($this->application, $this->systemet, $google, $twitter, $this->view);
+        $this->publicController = new controller\PublicAlcoholTripController($this->application, $this->model, $this->view);
     }
 
     function Init($method="Index", ...$params){
@@ -45,15 +38,15 @@ class AlcoholTrip implements \IPlugin
     }
 
     public function Install(){
-        $this->systemet->Install();
+        $this->model->Install();
     }
 
     public function UnInstall(){
-        $this->systemet->Uninstall();
+        $this->model->Uninstall();
     }
 
     public function IsInstalled(){
-        return $this->systemet->IsInstalled();
+        return $this->model->IsInstalled();
     }
 
     public function HookPageModules(){
