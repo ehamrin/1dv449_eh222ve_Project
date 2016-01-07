@@ -16,7 +16,6 @@ class AlcoholTrip implements \IPlugin
 {
     private $model;
     private $view;
-    private $adminController;
     private $publicController;
 
     public function __construct(\Application $application){
@@ -24,7 +23,6 @@ class AlcoholTrip implements \IPlugin
         $this->model = new model\AlcoholTripModel();
         $this->view = new view\AlcoholTripView($this->application, $this->model);
 
-        $this->adminController = new controller\AdminAlcoholTripController($this->application, $this->model, $this->view);
         $this->publicController = new controller\PublicAlcoholTripController($this->application, $this->model, $this->view);
     }
 
@@ -32,15 +30,6 @@ class AlcoholTrip implements \IPlugin
         if(method_exists($this->publicController, $method)){
             return $this->publicController->{$method}(...$params);
         }
-        return false;
-    }
-
-    public function AdminPanelInit($method = "Index", ...$params)
-    {
-        if(method_exists($this->adminController, $method)) {
-            return $this->adminController->{$method}(...$params);
-        }
-
         return false;
     }
 
