@@ -1,68 +1,13 @@
 <?php
 namespace plugin\AlcoholTrip\model;
 
-class AlcoholTripModel
+class SystemetAPI
 {
     private $conn;
     private static $cache_life = 7; //days
 
     public function __construct(){
         $this->conn = \Database::GetConnection();
-    }
-
-    public function getDistance($from, $to){
-        $mode = "drive";
-
-        $url = "http://maps.googleapis.com/maps/api/directions/json?origin=";
-        $url .= urlencode($from);
-        $url .= "&destination=";
-        $url .= urlencode($to);
-        $url .= "&sensor=false&language=sv&mode=$mode";
-
-        $jsonfile = file_get_contents($url);
-        $jsonarray = json_decode($jsonfile);
-
-        if (isset($jsonarray->routes[0]->legs[0]->distance->value)) {
-            return($jsonarray->routes[0]->legs[0]->distance->value);
-        }
-        return false;
-    }
-
-    public function getGasPrice(){
-        try{
-            $TweetPHP = new \TweetPHP(array(
-                'consumer_key'              => \Settings::Twitter_ConsumerKey,
-                'consumer_secret'           => \Settings::Twitter_ConsumerSecret,
-                'access_token'              => \Settings::Twitter_AccessToken,
-                'access_token_secret'       => \Settings::Twitter_AccessTokenSecret,
-                'twitter_screen_name'       => 'St1Sverige',
-                'cache_dir'                 => __DIR__ . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
-                'cache_time'                => 60*60*24 //1 day
-            ));
-
-            $tweet_array = $TweetPHP->get_tweet_array();
-
-            $gasPrice = new GasPrice($tweet_array);
-
-            return $gasPrice;
-
-        }catch(\Exception $e){
-            return false;
-        }
-    }
-
-    public function getCity($lat, $long){
-        $url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=";
-        $url .= round($lat,2).",";
-        $url .= round($long,2);
-
-        $jsonfile = file_get_contents($url.'&sensor=false');
-        $jsonarray = json_decode($jsonfile);
-
-        if (isset($jsonarray->results[1]->address_components[1]->long_name)) {
-            return($jsonarray->results[1]->address_components[1]->long_name);
-        }
-        return false;
     }
 
     public function GetProducts(){
@@ -75,7 +20,25 @@ class AlcoholTripModel
 
             $search_term = "%$term%";
 
-            $stmt = $this->conn->prepare("SELECT *, MATCH(name) AGAINST (:term) as score FROM product WHERE MATCH(name) AGAINST (:term) OR identifier LIKE :search_term ORDER BY score DESC, name ASC, volume DESC");
+            $stmt = $this->conn->prepare("
+                SELECT
+                  *,
+                  MATCH(name) AGAINST (:term) as score
+                FROM
+                  product
+                WHERE
+                    MATCH(name) AGAINST (:term)
+                  OR
+                    identifier LIKE :search_term
+                  OR
+                    name LIKE :search_term
+                ORDER BY
+                  score DESC,
+                  name ASC,
+                  volume DESC
+                LIMIT 15
+            ");
+
             $stmt->execute(array(":term" => $term, ":search_term" => $search_term));
 
             return $stmt->fetchAll();
@@ -86,6 +49,7 @@ class AlcoholTripModel
     }
 
     private function loadFromDb(){
+        //Least acceptable date product can be used from cache-setting
         $time = date('Y-m-d H:i:s', strtotime('-' . self::$cache_life  . ' days', time()));
 
         $stmt = $this->conn->prepare("SELECT * FROM product WHERE created > '$time' ");
@@ -94,6 +58,7 @@ class AlcoholTripModel
         if($stmt->rowCount()){
             return $stmt->fetchAll();
         }else {
+            //Found no data up to date
             return null;
         }
     }
@@ -102,6 +67,8 @@ class AlcoholTripModel
         try{
             $content = $this->loadFromURL($url);
             $this->insertProductsToDatabase($content);
+
+            //Load fresh content from Database
             return $this->loadFromDb();
 
         }catch(\Throwable $e){
@@ -110,6 +77,8 @@ class AlcoholTripModel
     }
 
     private function loadFromURL($url){
+
+        //Setup Curl request
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -120,6 +89,8 @@ class AlcoholTripModel
         $xml = simplexml_load_string($data);
 
         $rows = array();
+
+        //Parse XML
         foreach($xml->artikel as $product){
             $rows[] = array(
                 $product->Artikelid[0],
@@ -170,6 +141,10 @@ class AlcoholTripModel
 
 
     }
+
+    /*
+     * CMS plugin methods
+     */
 
     public function Install(){
         $this->conn->exec('

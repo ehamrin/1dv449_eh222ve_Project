@@ -1,16 +1,20 @@
 <?php
 namespace plugin\AlcoholTrip\view;
 
-use plugin\AlcoholTrip\model\AlcoholTripModel;
+use plugin\AlcoholTrip\model\SystemetAPI;
+use plugin\AlcoholTrip\model\GoogleAPI;
+use plugin\AlcoholTrip\model\TwitterAPI;
 
-class AlcoholTripView
+class View
 {
     private $application;
 
-    public function __construct(\Application $application, AlcoholTripModel $model)
+    public function __construct(\Application $application, SystemetAPI $systemet, GoogleAPI $google, TwitterAPI $twitter)
     {
         $this->application = $application;
-        $this->model = $model;
+        $this->systemet = $systemet;
+        $this->google = $google;
+        $this->twitter = $twitter;
     }
 
     public function getSearchValue()
@@ -22,7 +26,7 @@ class AlcoholTripView
     public function getSearchResult(){
         $ret = "";
         if(isset($_GET['search'])){
-            $res = $this->model->searchProduct($_GET['search']);
+            $res = $this->systemet->searchProduct($_GET['search']);
             if(count($res)){
                 foreach($res as $row){
                     $ret .= '<li>
@@ -40,6 +44,7 @@ class AlcoholTripView
     }
 
     public function RenderModule(){
+        //Make sure our scripts and css get loaded
         $this->application->AddScriptDependency('/js/AlcoholTrip/trip-calculator.min.js');
         $this->application->AddCSSDependency('/css/AlcoholTrip/style.min.css');
 
