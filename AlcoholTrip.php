@@ -20,10 +20,17 @@ class AlcoholTrip implements \IPlugin
 
     public function __construct(\Application $application){
         $this->application = $application;
-        $this->model = new model\AlcoholTripModel();
-        $this->view = new view\AlcoholTripView($this->application, $this->model);
 
-        $this->publicController = new controller\PublicAlcoholTripController($this->application, $this->model, $this->view);
+        //Models
+        $this->systemet = new model\SystemetAPI();
+        $twitter = new model\TwitterAPI();
+        $google = new model\GoogleAPI();
+
+        //Views
+        $this->view = new view\View($this->application, $this->systemet, $google, $twitter);
+
+        //Controllers
+        $this->publicController = new controller\PublicController($this->application, $this->systemet, $google, $twitter, $this->view);
     }
 
     function Init($method="Index", ...$params){
@@ -38,15 +45,15 @@ class AlcoholTrip implements \IPlugin
     }
 
     public function Install(){
-        $this->model->Install();
+        $this->systemet->Install();
     }
 
     public function UnInstall(){
-        $this->model->Uninstall();
+        $this->systemet->Uninstall();
     }
 
     public function IsInstalled(){
-        return $this->model->IsInstalled();
+        return $this->systemet->IsInstalled();
     }
 
     public function HookPageModules(){
