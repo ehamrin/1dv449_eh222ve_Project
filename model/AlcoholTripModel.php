@@ -80,8 +80,7 @@ class AlcoholTripModel
 
             return $stmt->fetchAll();
         }catch(\Exception $e){
-            debug($e);
-            throw $e;
+            return false;
         }
 
     }
