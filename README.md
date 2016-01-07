@@ -50,4 +50,4 @@ Försöka få tillgång till utbud hos några border shopar och integrera detta 
 
 ###Klassdiagram
 
-![alt text](http://1dv449.erikhamrin.se/images/AlkoholrundanClassDiagram.png)
+![alt text](http://1dv449.erikhamrin.se/images/AlcoholRundanClassDiagram.png)
