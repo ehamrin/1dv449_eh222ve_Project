@@ -9,12 +9,30 @@ Användaren väljer vilken border shop man har tänkt handla hos och vad använd
 
 ##Tekniker
 ###APIer
-Webbsidan kommer att utgå ifrån 3st APIer:
 
- * Systembolagets API (Sortiment)
-	 * Detta kan behöva bytas ut mot [systemetapi.se](http://systemetapi.se/). Jag har testat mot systembolagets egna api, men då hela sortimentet hämtas som en stor XML får min server timeout 95% av anropen då det är en stor fil. systemetapi.se mellanlagrar Systembolagets egna XML och applikationer kan ställa specifika frågor mot den med JSON-svar.
- * [@St1Sverige](https://twitter.com/st1sverige)'s twitterfeed (Aktuellt bensinpris)
- * Google Maps (Platstjänst samt avståndsberäkning)
+* HTML5 Geolocation för att få tillgång till användarens platstjänst.
+
+* Google Geocode för att avgöra vilken stad användaren befinner sig i om användaren tillåter platstjänster.
+
+* Google Directions för att avgöra avståndet mellan användarens stad och bordershoppen.
+
+* Twitter API [@St1Sverige](https://twitter.com/st1sverige)'s twitterfeed för aktuellt bensinpris.
+
+* Systembolaget för att hämta deras produktsortiment.
+
+Vissa APIer är beroende av varandra, t.ex. så används inte Geocode API:et om inte användaren godkänner användandet av HTML5 Geolocation.
+
+####Cachning av API
+För att inte belasta API-servrarna för mycket sparas en del data på servern. 
+
+* **Systembolaget** 
+ * **Server:** produktsortiment mellanlagras i en SQL-databas i en vecka från första efterfrågan. Denna tidsperiod går att ändra smidigt, att jag valt en vecka beror lite på hur "färsk" data man behöver för sortimentet. De största skillnaderna är nog inte priset, utan produkterna i sig. Och dyker det upp en ny produkt kan det vara trkigt att inte kunna se den på mer än 2 veckor.
+ * **Klient:** Produkter användaren har sökt efter cachas lokalt hos användaren för att bibehålla persistens mellan sidladdningar i kundkorgen.
+*  **Twitter**
+ *  **Server:** Twitter-feeden cachas i en fil på servern i 24h.
+ *  **Klient:** Bensinpriserna sparas lokalt hos användaren. Detta uppdateras max 1 gång/dygn. 
+* **Google**
+ * **Klient:** Alla sökningar görs endast en gång och sparas lokalt hos användaren. 
 
 ###Offline
 Applikation skall fungera i sin helhet om användaren inte har en internetuppkoppling, d.v.s. ingenting ska krascha.
