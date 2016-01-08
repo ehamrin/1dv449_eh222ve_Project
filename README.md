@@ -50,25 +50,53 @@ Service Workern kollar alltid först om det finns cacheat data, om det finns få
 
 Skulle datan inte finnas i cachen hämtas ny data direkt och sparas undan i cachen, misslyckas anropet visas en default "offline"-sida.
 
-Till exempel:
-
-* Cachning av rutter till populära border-shopar med avstånd, samt de användaren sökt på tidigare.
-* Cachning av aktuellt bensinpris
-* Cachning av delar av Systembolagets sortiment (är tveksam till om man ska försöka cachea hela, det kommer att testas, annars mest populära/det man sökt på tidigare)
-
-De övriga delarna är en beräkning/sammanställning av ovannämda delar och bör således fungera offline.
-
-####Offline-tekniker
-Den teknik som primärt kommer att underökas för offline-bruk är [Service Workers](http://www.html5rocks.com/en/tutorials/service-worker/introduction/)
-
 ###Hosting
-Webbsidan kommer byggas på en Apache-server med PHP7 som serverspråk. Webbsidan kommer att köras på HTTPS-protokollet.
+Applikationen hostas på min egna Apache-server med PHP7. Det var ett taktiskt val att använda Service Workers då jag blev tvingad att använda mig utav HTTPS, vilket jag inte gjort tidigare. Jag använder mig utav Let's Encrypt som utfärdare av certifikat och det var intressant att installera detta på servern.
 
-##Problematik
-1. ST1 slutar publicera bensinpris
-	* **Lösning:** Leta efter någon annan tjänst som publicerar bensinpriser, men se till att det senaste från Twitter alltid är cacheat på servern.
-2. Man vill inte dela med sig av sin plats.
-	* **Lösning:** Ge användaren förslag på förbestämda platser i Sverige(med lagom spridning) för att kunna ge en sådan bra upplevelse som möjligt.
+###Ramverk
+Serverapplikationen bygger på mitt egna självinstallerande CMS som är under utveckling, vilket även är min motivation till varför jag använder det. Detta har inneburit att jag har behövt fixa en hel del saker med CMSet parallellt med projektet för att tillfredställa den funktionalitet som saknats. 
+
+CMS'et i sig är modulbaserat där ALLT(adminpanel, pages, slider, inloggning, errorlog m.m.) mer eller mindre är ett plugin och sammanlänkningen sker med Hooks. Målet är att varje plugin skall hålla sig till en mapp som ska kunna självinstalleras. Det som finns i detta repositorie är innehållet i pluginmappen för AlcoholTrip.
+
+##Säkerhet
+
+###SQL-injections
+All kommunikation mot databas sker via prepared statements och tillåter därför ingen otillåten injection.
+
+###XSS
+Då användaren inte kan påverka applikationen på servern finns ingen möjlighet till XSS-attacker.
+
+###Cross Site Request Forgery
+CMS'et i sig är för tillfället öppen för attacker med CSRF i adminpanelen, detta är ingenting som hunnits med att åtgärda under projektets gång utan kommer att fixas i ett senare skede med AntiRequestForgery-tokens.
+
+**För projektet:**
+Då användaren inte kan påverka applikationen på servern eller logga in finns ingen möjlighet till CSRF-attacker.
+
+###Åtkomst av otillåtna resurser
+Mappen där projektet ligger på servern ligger utanför dokumentrooten och går således inte att komm åt via en url, om det inte ligger i projektet egna public-mapp och är antingen CSS, JS eller JSON-filer.
+
+Det finns inga URLer som är publika som skall kräva auktorisering för detta projekt. CMSet i sig har en adminpanel, men det är ingenting som det här pluginet utnyttjar.
+
+##Prestanda
+###Cache-header
+Samtliga filer pluginet har kontroll över cachas på klienten med olika tider med hjälp av "max-age" beroende på vad som efterfrågas. Dynamiska filer såsom JSON-sökningar cachas inte av webbläsaren automtiskt. CSS-filer och Javascript cachas i ett dygn, vilket absolut bör utökas till ca: 3 månader. Detta görs när CMS'et inte längre är under utveckling.
+
+###Scriptplacering
+Allt javascript är placerade i filer och i slutet på dokumentet för att tillåta en progressiv rendering av sidan. 
+
+###Stylesheetplacering
+Alla CSS-regler är placerade i filer och i HEAD-taggen för att tillåta en progressiv rendering av sidan.
+
+###Samla resurser i olika filer
+Här är det ett medvetet val att inte samla alla JavaScript-filer i en och samma. Anledningen till detta är att CMS'et avgör vilka resurser som behövs för varje sidladdning och för att inte ladda in onödiga resurser är därför javascript och css uppdelat i olika filer. För projektets sida betyder det att filerna som är specifika för pluginet inte laddas in på 'Om Sidan'.
+
+###Minifiering av resurser
+Att hämta resurser är det som tar längst tid när man i normala fall laddar en sida, därför är samtliga resurser minifierade.
+Detta görs genom att ta bort kommentarer och whitespaces i filerna.
+
+###Komprimering
+Samtliga resurser komprimmeras med GZIP. Undantaget för detta är bilder och (icke-existerande) PDF-filer.
+
 
 ##Vidareutveckling efter deadline
 ###Integrering med border shop
