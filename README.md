@@ -97,6 +97,9 @@ Detta görs genom att ta bort kommentarer och whitespaces i filerna.
 ###Komprimering
 Samtliga resurser komprimmeras med GZIP. Undantaget för detta är bilder och (icke-existerande) PDF-filer.
 
+###Content Delivery Network
+Alla resurser och ramverk hostas på samma domän. Anledningen till detta är att Service Workern genererade en massa fel när jag försökte använda mig utan en CDN för jQuery och FontAwesome. Återstår att hitta en fungerande lösning på detta.
+
 
 ##Vidareutveckling efter deadline
 ###Integrering med border shop
