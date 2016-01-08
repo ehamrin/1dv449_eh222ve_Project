@@ -17,7 +17,20 @@ Webbsidan kommer att utgå ifrån 3st APIer:
  * Google Maps (Platstjänst samt avståndsberäkning)
 
 ###Offline
-Då många delar av applikationen skulle kunna fungera offline finns stor möjlighet att utveckla en offline-applikation. 
+Applikation skall fungera i sin helhet om användaren inte har en internetuppkoppling, d.v.s. ingenting ska krascha.
+
+Detta medför dock restriktioner, för att inte cacha allt för mycket på klientsidan (Systembolagets produktsortiment är på ~10mb) så kan användaren fortsatt söka och de sökningar som gjorts tidigare visas som vanligt. Skulle användaren söka på någonting nytt visas "Kunde inte ansluta till servern" (vilket även visas om servern skulle lägga ner). Om användaren försöker besöka en sida som tidigare inte visats möts denne av en statisk html-sida som informerar om att användaren är offline.
+
+Om användaren tappar internet anslutning till servern meddelas användaren om detta av en banner högst upp på sidan. Här funderade jag på hur det kan störa minst i användandet av applikationen, och implementationen blev att bannern alltid ligger högst upp och förskjuter inget innehåll på sidan i höjdled. Klickar användaren på meddelandet försvinner det.
+
+Skulle användaren återfå sin internetuppkoppling tas det gamla meddelandet bort(om inte användaren gjort det själv) och därefter syns ett nytt meddelande om att anslutningen är tillbaka.
+
+####Service Worker
+Offline strategin har implementerats med hjälp av Service Workers vilket har åstadkommit en hel del huvudvärk då detta är helt nytt för mig, likaså promises. Dock är jag väldigt nöjd med resultatet!
+
+Service Workern kollar alltid först om det finns cacheat data, om det finns får användaren se det. Därefter uppdateras cachen så att nästa gång användaren laddar sidan är det färsk data.
+
+Skulle datan inte finnas i cachen hämtas ny data direkt och sparas undan i cachen, misslyckas anropet visas en default "offline"-sida.
 
 Till exempel:
 
