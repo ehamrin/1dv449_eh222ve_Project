@@ -1,3 +1,10 @@
+Date.prototype.formattedDateString = function() {
+    var yyyy = this.getFullYear().toString();
+    var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
+    var dd  = this.getDate().toString();
+    return yyyy + '-' + (mm[1]?mm:"0"+mm[0]) + '-' + (dd[1]?dd:"0"+dd[0]); // padding
+};
+
 var products = localStorage.getItem('rawProducts') ? JSON.parse(localStorage.getItem('rawProducts')) : {};
 var distances = localStorage.getItem('distances') ? JSON.parse(localStorage.getItem('distances')) : {};
 
@@ -17,7 +24,8 @@ var AlcoholTrip = {
     Container: {
         result: $('#search_result'),
         searchBar: $("#product_search"),
-        cart: $("#cart")
+        cart: $("#cart"),
+        clearHelper: $(".clear-helper")
     },
 
     AddEvents: function(){
@@ -25,22 +33,35 @@ var AlcoholTrip = {
 
         AlcoholTrip.Container.searchBar.focus();
         AlcoholTrip.Container.searchBar.keyup(function(e){
-
             if(xhr){
                 xhr.abort();
             }
 
-            if(e.target.value.length >= 3){
+            AlcoholTrip.Container.clearHelper.show();
 
+            if(e.target.value.length >= 3){
                 xhr = $.ajax({
                     type: "GET",
-                    url: "/json/AlcoholTrip/products.json?search=" + e.target.value,
-                    success: AlcoholTrip.Search.add
+                    url: "/json/AlcoholTrip/products.json?search=" + encodeURI(e.target.value),
+                    success: AlcoholTrip.Search.add,
+                    error: function(xhr, status, error) {
+                        if(xhr.statusText != "abort"){
+                            AlcoholTrip.Container.result.html("<p class='network-error'>Kunde inte ansluta till servern</p>")
+                        }
+                    }
                 });
 
             }else if(e.target.value.length == 0){
                 AlcoholTrip.Container.result.empty();
+                AlcoholTrip.Container.clearHelper.hide();
             }
+
+        });
+
+        AlcoholTrip.Container.clearHelper.click(function(){
+            AlcoholTrip.Container.searchBar.val("");
+            AlcoholTrip.Container.result.empty();
+            AlcoholTrip.Container.clearHelper.hide();
         });
 
         $("#search_form").submit(function(e){
@@ -174,20 +195,18 @@ var AlcoholTrip = {
                 }
 
                 var currentDate = new Date();
-                var cachedDate = new Date(cache.date);
-                currentDate.setHours(0, 0, 0, 0);
-                cachedDate.setHours(0, 0, 0, 0);
+                return cache != currentDate.formattedDateString();
 
-                return currentDate.getTime() >= cachedDate.getTime();
             },
 
             get: function () {
                 if (AlcoholTrip.Gas.Price.isValid()) {
                     return JSON.parse(localStorage.getItem('gasPrice'));
                 } else {
+                    var currentDate = new Date();
                     $.ajax({
                         type: "GET",
-                        url: "/json/AlcoholTrip/gas_price.json",
+                        url: "/json/AlcoholTrip/gas_price.json?version=" + currentDate.formattedDateString(),
                         success: function (response) {
                             console.log("got new price", response);
                             localStorage.setItem('gasPrice', JSON.stringify(response));
@@ -401,7 +420,7 @@ var AlcoholTrip = {
                     '<div class="remove" data-remove="' + id + '"><i class="fa fa-times-circle"></i></div>' +
                     '<div class="product" data-id="' + id + '">' +
                     '<span class="title">' + el.name + ' (' + el.alcohol + ')</span>' +
-                    '<span class="price">' + product.qty + 'st á ' + el.price + 'kr (' + product.localPrice + 'kr)</span>' +
+                    '<span class="price">' + product.qty + 'st á ' + el.price + 'kr (' + Math.round(product.localPrice, 2) + 'kr)</span>' +
                     '<span class="borderprice">' + product.price + 'kr på bordershop</span>' +
                     '</div>' +
                     '</li>';
