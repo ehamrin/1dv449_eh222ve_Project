@@ -50,13 +50,16 @@ Service Workern kollar alltid först om det finns cacheat data, om det finns få
 
 Skulle datan inte finnas i cachen hämtas ny data direkt och sparas undan i cachen, misslyckas anropet visas en default "offline"-sida.
 
+**Notis:** Då service workern måste ligga i rootkatalogen kan denne således inte ligga i plugin-mappen för detta projekt. För att se innehållet går det att se på följande [länk](https://github.com/ehamrin/cmsPlugin/blob/master/public/service-worker.js),
+likaså [fallback för offline](https://github.com/ehamrin/cmsPlugin/blob/master/public/offline.html)
+
 ###Hosting
 Applikationen hostas på min egna Apache-server med PHP7. Det var ett taktiskt val att använda Service Workers då jag blev tvingad att använda mig utav HTTPS, vilket jag inte gjort tidigare. Jag använder mig utav Let's Encrypt som utfärdare av certifikat och det var intressant att installera detta på servern.
 
 ###Ramverk
-Serverapplikationen bygger på mitt egna självinstallerande CMS som är under utveckling, vilket även är min motivation till varför jag använder det. Detta har inneburit att jag har behövt fixa en hel del saker med CMSet parallellt med projektet för att tillfredställa den funktionalitet som saknats. 
+Serverapplikationen bygger på mitt egna [självinstallerande CMS](https://github.com/ehamrin/cmsPlugin) som är under utveckling, vilket även är min motivation till varför jag använder det. Detta har inneburit att jag har behövt fixa en hel del saker med CMSet parallellt med projektet för att tillfredställa den funktionalitet som saknats. 
 
-CMS'et i sig är modulbaserat där ALLT(adminpanel, pages, slider, inloggning, errorlog m.m.) mer eller mindre är ett plugin och sammanlänkningen sker med Hooks. Målet är att varje plugin skall hålla sig till en mapp som ska kunna självinstalleras. Det som finns i detta repositorie är innehållet i pluginmappen för AlcoholTrip.
+CMS'et i sig är modulbaserat där [ALLT](https://github.com/ehamrin/cmsPlugin/tree/master/src/plugin)(adminpanel, pages, slider, inloggning, errorlog m.m.) mer eller mindre är ett plugin och sammanlänkningen sker med Hooks. Målet är att varje plugin skall hålla sig till en mapp som ska kunna självinstalleras. Det som finns i detta repositorie är innehållet i pluginmappen för AlcoholTrip.
 
 ##Säkerhet
 
