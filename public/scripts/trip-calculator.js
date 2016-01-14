@@ -13,8 +13,10 @@ var distanceXHR;
 var AlcoholTrip = {
     Init: function(){
 
+        //Lets add all the events
         AlcoholTrip.AddEvents();
 
+        //And draw the UI
         AlcoholTrip.Cart.draw();
         AlcoholTrip.Locator.draw();
         AlcoholTrip.Gas.Consumption.draw();
@@ -22,6 +24,7 @@ var AlcoholTrip = {
     },
 
     Container: {
+        //Store these so we don't have to call them multiple times
         result: $('#search_result'),
         searchBar: $("#product_search"),
         cart: $("#cart"),
@@ -29,6 +32,11 @@ var AlcoholTrip = {
     },
 
     AddEvents: function(){
+
+        /*
+         * Search functionality
+         */
+
         var xhr;
 
         AlcoholTrip.Container.searchBar.focus();
@@ -37,14 +45,18 @@ var AlcoholTrip = {
                 xhr.abort();
             }
 
+            //User probably typed something, so let them clear it again easily
             AlcoholTrip.Container.clearHelper.show();
 
+
             if(e.target.value.length >= 3){
+                //User typed something long enough that we want to search for it
                 xhr = $.ajax({
                     type: "GET",
                     url: "/json/AlcoholTrip/products.json?search=" + encodeURI(e.target.value),
                     success: AlcoholTrip.Search.add,
                     error: function(xhr, status, error) {
+                        //If user didn't abort we weren't able to get to the server
                         if(xhr.statusText != "abort"){
                             AlcoholTrip.Container.result.html("<p class='network-error'>Kunde inte ansluta till servern</p>")
                         }
@@ -52,13 +64,18 @@ var AlcoholTrip = {
                 });
 
             }else if(e.target.value.length == 0){
+                //User manually cleared the search box
                 AlcoholTrip.Container.result.empty();
                 AlcoholTrip.Container.clearHelper.hide();
             }
 
         });
 
+        //Empty results if user "clears" search-box
         AlcoholTrip.Container.clearHelper.click(function(){
+            if(xhr){
+                xhr.abort();
+            }
             AlcoholTrip.Container.searchBar.val("");
             AlcoholTrip.Container.result.empty();
             AlcoholTrip.Container.clearHelper.hide();
@@ -68,7 +85,16 @@ var AlcoholTrip = {
             e.preventDefault();
         });
 
+        /*
+         * End search functionality
+         */
 
+
+        /*
+         * Cart functionality
+         */
+
+        //Lets user remove items from cart
         AlcoholTrip.Container.cart.on("click", ".remove", function(e){
             var element = $(this);
             if(!element.hasClass("remove")){
@@ -79,6 +105,7 @@ var AlcoholTrip = {
             AlcoholTrip.Cart.remove(id);
         });
 
+        //Lets user edit items in cart be re-adding them
         AlcoholTrip.Container.cart.on('click', '.product', function(e){
             var element = $(this);
             if(!element.hasClass("product")){
@@ -89,21 +116,33 @@ var AlcoholTrip = {
             AlcoholTrip.Cart.add(id);
         });
 
+        //Lets user add items to cart from search-result
         AlcoholTrip.Container.result.on('click', 'li', function(e){
             var id = $(this).data("id");
             AlcoholTrip.Cart.add(id);
         });
 
+        /*
+         * End cart functionality
+         */
+
+        //Update users gas consumption
         $("#gasConsumption").on("change",function(){
             AlcoholTrip.Gas.Consumption.set($(this).val());
             AlcoholTrip.Gas.Consumption.update();
         });
 
+        //User updated their location or the destination
         $("#location").on("change", AlcoholTrip.Distance.update);
-        $("#gas_type").on("change", AlcoholTrip.Result.calculate);
         $("#destination").on("change", AlcoholTrip.Distance.update);
+
+        //User updated their gas type
+        $("#gas_type").on("change", AlcoholTrip.Result.calculate);
+
+        //User wants to inspect the results
         $("#view_results").on("click", AlcoholTrip.Result.showDetails);
 
+        //User is on mobile and views/hides the menu
         $('#cart_menu').click(function(e){
             $('body').toggleClass('active');
         });
