@@ -15,38 +15,10 @@ class View
         $this->systemet = $systemet;
     }
 
-    public function getSearchValue()
-    {
-        return $_GET['search'] ?? "";
-
-    }
-
-    public function getSearchResult(){
-        $ret = "";
-        if(isset($_GET['search'])){
-            $res = $this->systemet->searchProduct($_GET['search']);
-            if(count($res)){
-                foreach($res as $row){
-                    $ret .= '<li>
-                        <span class="title">' . $row->name . ' (' . $row->alcohol . ')</span>
-                        <span class="producer">Producerad av:' . $row->producer . '</span>
-                        <span class="price">' . $row->price . 'kr</span>
-                        <span class="container">' . $row->volume . 'ml (' . $row->container . ')</span>
-                    </li>';
-                }
-
-                return '<ul>' . $ret . '</ul>';
-            }
-        }
-        return $ret;
-    }
-
     public function RenderModule(){
         //Make sure our scripts and css get loaded
         $this->application->AddScriptDependency('/js/AlcoholTrip/trip-calculator.min.js');
         $this->application->AddCSSDependency('/css/AlcoholTrip/style.min.css');
-
-        $searchResult = $this->getSearchresult();
 
         return <<<HTML
         <div id="result">
@@ -54,8 +26,11 @@ class View
             <div id="result_banner"></div>
         </div>
         <form action="" id="search_form" method="GET" class="inline-2-3">
-        <input type="search" name="search" autocomplete="off" placeholder="Sök efter varor på systembolaget" id="product_search" value="{$this->getSearchValue()}"/>
-        <div id="search_result" class="product-list">{$searchResult}</div>
+        <div id="search_bar">
+            <input type="search" name="search" autocomplete="off" placeholder="Sök efter varor på systembolaget" id="product_search"/>
+            <span class="clear-helper">x</span>
+        </div>
+        <div id="search_result" class="product-list"></div>
 </form>
 <div id="cart_menu"></div>
 <div class="module-sidebar inline-1-3">
