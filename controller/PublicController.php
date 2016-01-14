@@ -48,12 +48,12 @@ class PublicController
 
         if(isset($content)){
             if($content !== false){
-                return json_encode($content, JSON_PRETTY_PRINT);
+                return json_encode($content);
             }else{
                 header("HTTP/1.0 400 Bad Request");
                 $error = new \stdClass();
                 $error->message = $possibleError;
-                return json_encode($error, JSON_PRETTY_PRINT);
+                return json_encode($error);
             }
         }
 
