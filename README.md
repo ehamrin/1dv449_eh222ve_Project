@@ -7,6 +7,9 @@ En responsiv webbsida där användaren kan välja artiklar ur Systembolagets sor
 
 Användaren väljer vilken border shop man har tänkt handla hos och vad användarens milförbrukning är, och presenteras då med uppskattad kostnad för resan(inkl. varor) och vad motsvarande hade kostat på systembolaget.
 
+###Instruktionsvideo
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/RYS4e7-Y-Eg/0.jpg)](http://www.youtube.com/watch?v=RYS4e7-Y-Eg "Alkoholrundan.nu")
+
 ##Tekniker
 ###APIer
 
