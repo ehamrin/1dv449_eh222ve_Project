@@ -137,11 +137,33 @@ För applikationen skulle jag säga att det inte finns några säkerhetsluckor, 
 
 Den största risken är att någon tar sig in i adminpanelen då man därifrån kan styra allt, vilka plugin som ska vara aktiverade etc.
 
-##Vidareutveckling efter deadline
-###Integrering med border shop
+##Egna reflektioner
+
+Jag tycker att projektet har gått väldigt bra, jag är nöjd med slutresultatet. Det största problemet jag har stött på är nog att få Service Worker att fungera. Att detta har tagit tid beror på att jag inte sitter med Javascript allt för mycket utan att det mest blir lite eventhanterare. På det finns det ju nu någonting som heter promises, vilket det inte fanns på min tid, eller så hade jag bara inte hört talas om det. Promises är smidigt att jobba med, men det tog tid att läsa på om det och förstå hur de fungerar för någon som är van vid synkroniserad programmering.
+
+Jag tycker att jag hann med all funktionalitet som jag hade planerat. Det fanns väl en förhoppning om att integrera appliktionen med en bordershop från början, men då ingen har ett API eller väldigt skrap-vänlig hemsida ansåg jag att det skulle ta för mycket tid för denna applikation.
+
+###Fortsättning
+####Integrering med border shop
 Försöka få tillgång till utbud hos några border shopar och integrera detta i tjänsten för att användare ska slippa att manuellt knappa in priset på bordershop.
 
-###Populära sökningar
+####Populära sökningar
 Ge användaren tillgång till en lista på de mest populära varorna som andra har lagt till i sina kundkorgar.
+
+####Registreringsnummer
+Istället för att låta användaren välja drivmedel och bensinförbrukning hade det varit möjligt att använda Transportstyrelsens API för att slå upp registreringsnummer och få tillgång till bilinformation. Denna tjänst kostar dock pengar och skulle kunna finansieras via t.ex. annonser på hemsidan.
+
+###Betygshöjande
+
+Applikationen innehåller fler APIer än baskravet som förhöjer användarupplevelsen. Minimumkravet för att applikationen ska fungera är systembolagets- och Google Directions-API. Resten är möjlig med hjälp av användarens inmatning. Applikationen integrerar ett API mot Twitter som tar reda på aktuellt bensinpris och även Google Geocode för att hämta användarens stad. Dessa två anser jag höjer applikationens funktionalitet.
+
+Applikationens design är anpassad för att visas på mobila enheter, detta anser jag själv kanske inte är betygshöjande i sig då jag anser att det borde snarare vara ett baskrav för det vi ska utveckla. Dock står det som förslag i instruktionen.
+
+Jag har impementerat geolocation för att ta reda på användarens plats. Detta fungerar bara om datorn har WIFI(API-begränsning) och syns därför inte i demonstrationsvideon då min dator kör med nätverkskabel.
+
+Jag har utforskat tekniken Service Worker och lagt mycket tid på att få det att fungera bra och har fått mig en god förståelse för både offline-first och tekniken.
+
+Jag har implementerat HTTPS-protokollet på min webbserver för att få Service Worker att fungera, vilket även det har varit en intressant och nyttig utmaning.
+
 
 
