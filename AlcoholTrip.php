@@ -7,7 +7,7 @@ namespace plugin\AlcoholTrip;
  * @Name Alcohol Trip Module
  * @Description A module to calculate travel cost for booze
  * @Author Erik Hamrin
- * @Version v0.5
+ * @Version v1.0
  * @Icon fa-users
  */
 

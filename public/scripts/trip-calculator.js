@@ -466,7 +466,7 @@ var AlcoholTrip = {
             });
 
             if (html != "") {
-                html = "<ul>" + html + "</ul><p>Totalt på systembolaget:" + AlcoholTrip.Cart.total + "kr</p><p>Totalt på bordershop:" + AlcoholTrip.Cart.borderPrice + "kr</p>";
+                html = "<ul>" + html + "</ul><p>Totalt på systembolaget:" + Math.round(AlcoholTrip.Cart.total, 2) + "kr</p><p>Totalt på bordershop:" + AlcoholTrip.Cart.borderPrice + "kr</p>";
             } else {
                 html = "<p>Din varukorg är tom...</p>"
             }

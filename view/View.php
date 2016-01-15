@@ -24,16 +24,16 @@ class View
         <div id="result">
             <div id="view_results"><i class="fa fa-eye"></i></div>
             <div id="result_banner"></div>
-        </div>
-        <form action="" id="search_form" method="GET" class="inline-2-3">
+        </div><!--
+        --><form action="" id="search_form" method="GET" class="inline-2-3">
         <div id="search_bar">
             <input type="search" name="search" autocomplete="off" placeholder="Sök efter varor på systembolaget" id="product_search"/>
             <span class="clear-helper">x</span>
         </div>
         <div id="search_result" class="product-list"></div>
-</form>
-<div id="cart_menu"></div>
-<div class="module-sidebar inline-1-3">
+</form><!--
+--><div id="cart_menu"></div><!--
+--><div class="module-sidebar inline-1-3">
 <h2>Varukorg</h2>
 <div id="cart" class="product-list">Din varukorg är tom</div>
 <h2>Milförbukning</h2>
